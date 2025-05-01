@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Time of Day vs Missing Persons - Haunted Places</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .heatmap-container {
+            margin: 20px auto;
+            max-width: 900px;
+        }
+        h1, h2 {
+            text-align: center;
+            color: #333;
+        }
+        .axis-label {
+            font-size: 14px;
+            fill: #555;
+        }
+        .tooltip {
+            position: absolute;
+            padding: 10px;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            border-radius: 5px;
+            pointer-events: none;
+            font-size: 12px;
+        }
+        .legend-title {
+            font-size: 12px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="heatmap-container">
+        <h1>Haunted Places Analysis</h1>
+        <h2>Relationship Between Time of Day and Missing Persons Counts</h2>
+        <div id="heatmap"></div>
+    </div>
+
+    <script>
+        // Set up dimensions for the chart
+        const margin = {top: 80, right: 100, bottom: 100, left: 120};
+        const width = 800 - margin.left - margin.right;
+        const height = 500 - margin.top - margin.bottom;
+
+        // Create SVG element
+        const svg = d3.select("#heatmap")
+            .append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform", `translate(${margin.left}, ${margin.top})`);
+
+        // Create tooltip div
+        const tooltip = d3.select("body").append("div")
+            .attr("class", "tooltip")
+            .style("opacity", 0);
+
+        // Load the data
+        d3.json("data/HW3_haunted_places.json").then(data => {
+            // Filter out entries with missing values
+            const filteredData = data.filter(d => 
+                d.time_of_day && 
+                (d.Missing_Persons_Count && !isNaN(parseInt(d.Missing_Persons_Count)) ||
+                 d.Missing_Under_21_Count && !isNaN(parseInt(d.Missing_Under_21_Count)) ||
+                 d.Missing_Over_35_Count && !isNaN(parseInt(d.Missing_Over_35_Count)))
+            );
+
+            // Convert string values to numbers
+            filteredData.forEach(d => {
+                d.Missing_Persons_Count = parseInt(d.Missing_Persons_Count) || 0;
+                d.Missing_Under_21_Count = parseInt(d.Missing_Under_21_Count) || 0;
+                d.Missing_Over_35_Count = parseInt(d.Missing_Over_35_Count) || 0;
+            });
+
+            // Group data by time of day and state
+            const timeOfDayCategories = [...new Set(filteredData.map(d => d.time_of_day))].sort();
+            const states = [...new Set(filteredData.map(d => d.state))].sort();
+
+            // Create the aggregated data for the heatmap
+            const aggregatedData = [];
+            
+            timeOfDayCategories.forEach(time => {
+                states.forEach(state => {
+                    // Filter data for this time of day and state
+                    const stateTimeData = filteredData.filter(d => 
+                        d.time_of_day === time && d.state === state
+                    );
+                    
+                    if (stateTimeData.length > 0) {
+                        // Calculate aggregates
+                        const totalMissing = d3.sum(stateTimeData, d => d.Missing_Persons_Count);
+                        const under21Missing = d3.sum(stateTimeData, d => d.Missing_Under_21_Count);
+                        const over35Missing = d3.sum(stateTimeData, d => d.Missing_Over_35_Count);
+                        const countLocations = stateTimeData.length;
+                        
+                        aggregatedData.push({
+                            time_of_day: time,
+                            state: state,
+                            totalMissing: totalMissing,
+                            under21Missing: under21Missing,
+                            over35Missing: over35Missing,
+                            countLocations: countLocations,
+                            avgMissingPerLocation: totalMissing / countLocations
+                        });
+                    }
+                });
+            });
+
+            // Set up scales for the heatmap
+            const xScale = d3.scaleBand()
+                .domain(timeOfDayCategories)
+                .range([0, width])
+                .padding(0.05);
+
+            const yScale = d3.scaleBand()
+                .domain(states)
+                .range([0, height])
+                .padding(0.05);
+
+            // Set up the color scale for the heatmap
+            const colorScale = d3.scaleSequential()
+                .interpolator(d3.interpolateInferno)
+                .domain([0, d3.max(aggregatedData, d => d.avgMissingPerLocation)]);
+
+            // Create the heatmap cells
+            svg.selectAll("rect")
+                .data(aggregatedData)
+                .enter()
+                .append("rect")
+                .attr("x", d => xScale(d.time_of_day))
+                .attr("y", d => yScale(d.state))
+                .attr("width", xScale.bandwidth())
+                .attr("height", yScale.bandwidth())
+                .style("fill", d => colorScale(d.avgMissingPerLocation))
+                .style("stroke", "#white")
+                .style("stroke-width", 0.5)
+                .on("mouseover", function(event, d) {
+                    d3.select(this)
+                        .style("stroke", "#333")
+                        .style("stroke-width", 2);
+                        
+                    tooltip.transition()
+                        .duration(200)
+                        .style("opacity", .9);
+                        
+                    tooltip.html(`<strong>${d.state}, ${d.time_of_day}</strong><br/>
+                                  Total Missing: ${d.totalMissing}<br/>
+                                  Under 21 Missing: ${d.under21Missing}<br/>
+                                  Over 35 Missing: ${d.over35Missing}<br/>
+                                  Haunted Locations: ${d.countLocations}<br/>
+                                  Avg Missing per Location: ${d.avgMissingPerLocation.toFixed(2)}`)
+                        .style("left", (event.pageX + 10) + "px")
+                        .style("top", (event.pageY - 28) + "px");
+                })
+                .on("mouseout", function() {
+                    d3.select(this)
+                        .style("stroke", "white")
+                        .style("stroke-width", 0.5);
+                        
+                    tooltip.transition()
+                        .duration(500)
+                        .style("opacity", 0);
+                });
+
+            // Create x-axis
+            svg.append("g")
+                .attr("transform", `translate(0, ${height})`)
+                .call(d3.axisBottom(xScale))
+                .selectAll("text")
+                    .style("text-anchor", "end")
+                    .attr("dx", "-.8em")
+                    .attr("dy", ".15em")
+                    .attr("transform", "rotate(-45)");
+
+            // Add x-axis label
+            svg.append("text")
+                .attr("class", "axis-label")
+                .attr("x", width / 2)
+                .attr("y", height + margin.bottom / 1.5)
+                .style("text-anchor", "middle")
+                .text("Time of Day");
+
+            // Create y-axis
+            svg.append("g")
+                .call(d3.axisLeft(yScale));
+
+            // Add y-axis label
+            svg.append("text")
+                .attr("class", "axis-label")
+                .attr("transform", "rotate(-90)")
+                .attr("x", -height / 2)
+                .attr("y", -margin.left / 1.5)
+                .style("text-anchor", "middle")
+                .text("State");
+
+            // Add title
+            svg.append("text")
+                .attr("x", width / 2)
+                .attr("y", -40)
+                .attr("text-anchor", "middle")
+                .style("font-size", "16px")
+                .style("font-weight", "bold")
+                .text("Average Missing Persons per Haunted Location");
+
+            // Add color legend
+            const legendWidth = 20;
+            const legendHeight = 200;
+            
+            // Create the gradient for the legend
+            const defs = svg.append("defs");
+            const linearGradient = defs.append("linearGradient")
+                .attr("id", "linear-gradient")
+                .attr("x1", "0%")
+                .attr("y1", "100%")
+                .attr("x2", "0%")
+                .attr("y2", "0%");
+            
+            // Set the color stops for the gradient
+            const colorDomain = colorScale.domain();
+            const steps = 10;
+            
+            for (let i = 0; i <= steps; i++) {
+                const step = i / steps;
+                const value = colorDomain[0] + step * (colorDomain[1] - colorDomain[0]);
+                
+                linearGradient.append("stop")
+                    .attr("offset", `${100 * step}%`)
+                    .attr("stop-color", colorScale(value));
+            }
+            
+            // Create the legend rectangle
+            const legend = svg.append("g")
+                .attr("class", "legend")
+                .attr("transform", `translate(${width + 30}, ${height/2 - legendHeight/2})`);
+            
+            legend.append("rect")
+                .attr("width", legendWidth)
+                .attr("height", legendHeight)
+                .style("fill", "url(#linear-gradient)");
+            
+            // Add scale ticks to the legend
+            const legendScale = d3.scaleLinear()
+                .domain([d3.min(aggregatedData, d => d.avgMissingPerLocation), 
+                         d3.max(aggregatedData, d => d.avgMissingPerLocation)])
+                .range([legendHeight, 0]);
+            
+            const legendAxis = d3.axisRight(legendScale)
+                .ticks(5)
+                .tickFormat(d3.format(".1f"));
+            
+            legend.append("g")
+                .attr("transform", `translate(${legendWidth}, 0)`)
+                .call(legendAxis);
+            
+            // Add legend title
+            legend.append("text")
+                .attr("class", "legend-title")
+                .attr("x", 0)
+                .attr("y", -10)
+                .text("Avg Missing");
+
+        }).catch(error => {
+            console.error("Error loading the data:", error);
+            document.getElementById("heatmap").innerHTML = 
+                "<p style='color: red;'>Error loading data. Please check the console for details.</p>";
+        });
+    </script>
+</body>
+</html>

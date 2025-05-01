@@ -1,0 +1,358 @@
+[
+  {
+    "daylight_hours": 2.4,
+    "sightings": 1
+  },
+  {
+    "daylight_hours": 3.6,
+    "sightings": 1
+  },
+  {
+    "daylight_hours": 3.9,
+    "sightings": 1
+  },
+  {
+    "daylight_hours": 4.0,
+    "sightings": 1
+  },
+  {
+    "daylight_hours": 4.4,
+    "sightings": 1
+  },
+  {
+    "daylight_hours": 5.2,
+    "sightings": 1
+  },
+  {
+    "daylight_hours": 5.5,
+    "sightings": 1
+  },
+  {
+    "daylight_hours": 5.6,
+    "sightings": 2
+  },
+  {
+    "daylight_hours": 5.9,
+    "sightings": 2
+  },
+  {
+    "daylight_hours": 8.3,
+    "sightings": 4
+  },
+  {
+    "daylight_hours": 8.4,
+    "sightings": 21
+  },
+  {
+    "daylight_hours": 8.5,
+    "sightings": 35
+  },
+  {
+    "daylight_hours": 8.6,
+    "sightings": 47
+  },
+  {
+    "daylight_hours": 8.7,
+    "sightings": 47
+  },
+  {
+    "daylight_hours": 8.8,
+    "sightings": 119
+  },
+  {
+    "daylight_hours": 8.9,
+    "sightings": 128
+  },
+  {
+    "daylight_hours": 9.0,
+    "sightings": 147
+  },
+  {
+    "daylight_hours": 9.1,
+    "sightings": 436
+  },
+  {
+    "daylight_hours": 9.2,
+    "sightings": 592
+  },
+  {
+    "daylight_hours": 9.3,
+    "sightings": 549
+  },
+  {
+    "daylight_hours": 9.4,
+    "sightings": 478
+  },
+  {
+    "daylight_hours": 9.5,
+    "sightings": 310
+  },
+  {
+    "daylight_hours": 9.6,
+    "sightings": 315
+  },
+  {
+    "daylight_hours": 9.7,
+    "sightings": 311
+  },
+  {
+    "daylight_hours": 9.8,
+    "sightings": 308
+  },
+  {
+    "daylight_hours": 9.9,
+    "sightings": 473
+  },
+  {
+    "daylight_hours": 10.0,
+    "sightings": 177
+  },
+  {
+    "daylight_hours": 10.1,
+    "sightings": 166
+  },
+  {
+    "daylight_hours": 10.2,
+    "sightings": 116
+  },
+  {
+    "daylight_hours": 10.3,
+    "sightings": 68
+  },
+  {
+    "daylight_hours": 10.4,
+    "sightings": 50
+  },
+  {
+    "daylight_hours": 10.5,
+    "sightings": 42
+  },
+  {
+    "daylight_hours": 10.6,
+    "sightings": 16
+  },
+  {
+    "daylight_hours": 10.7,
+    "sightings": 5
+  },
+  {
+    "daylight_hours": 10.8,
+    "sightings": 30
+  },
+  {
+    "daylight_hours": 10.9,
+    "sightings": 16
+  },
+  {
+    "daylight_hours": 11.0,
+    "sightings": 5
+  },
+  {
+    "daylight_hours": 11.1,
+    "sightings": 7
+  },
+  {
+    "daylight_hours": 11.2,
+    "sightings": 20
+  },
+  {
+    "daylight_hours": 11.3,
+    "sightings": 240
+  },
+  {
+    "daylight_hours": 11.4,
+    "sightings": 766
+  },
+  {
+    "daylight_hours": 11.5,
+    "sightings": 1122
+  },
+  {
+    "daylight_hours": 11.6,
+    "sightings": 1137
+  },
+  {
+    "daylight_hours": 11.7,
+    "sightings": 665
+  },
+  {
+    "daylight_hours": 11.8,
+    "sightings": 127
+  },
+  {
+    "daylight_hours": 11.9,
+    "sightings": 39
+  },
+  {
+    "daylight_hours": 12.0,
+    "sightings": 22
+  },
+  {
+    "daylight_hours": 12.1,
+    "sightings": 21
+  },
+  {
+    "daylight_hours": 12.2,
+    "sightings": 20
+  },
+  {
+    "daylight_hours": 12.3,
+    "sightings": 3
+  },
+  {
+    "daylight_hours": 12.4,
+    "sightings": 18
+  },
+  {
+    "daylight_hours": 12.5,
+    "sightings": 14
+  },
+  {
+    "daylight_hours": 12.6,
+    "sightings": 13
+  },
+  {
+    "daylight_hours": 12.7,
+    "sightings": 7
+  },
+  {
+    "daylight_hours": 12.8,
+    "sightings": 3
+  },
+  {
+    "daylight_hours": 12.9,
+    "sightings": 9
+  },
+  {
+    "daylight_hours": 13.0,
+    "sightings": 2
+  },
+  {
+    "daylight_hours": 13.1,
+    "sightings": 2
+  },
+  {
+    "daylight_hours": 13.2,
+    "sightings": 4
+  },
+  {
+    "daylight_hours": 13.3,
+    "sightings": 6
+  },
+  {
+    "daylight_hours": 13.4,
+    "sightings": 7
+  },
+  {
+    "daylight_hours": 13.5,
+    "sightings": 3
+  },
+  {
+    "daylight_hours": 13.6,
+    "sightings": 9
+  },
+  {
+    "daylight_hours": 13.7,
+    "sightings": 5
+  },
+  {
+    "daylight_hours": 13.8,
+    "sightings": 26
+  },
+  {
+    "daylight_hours": 13.9,
+    "sightings": 32
+  },
+  {
+    "daylight_hours": 14.0,
+    "sightings": 22
+  },
+  {
+    "daylight_hours": 14.1,
+    "sightings": 31
+  },
+  {
+    "daylight_hours": 14.2,
+    "sightings": 50
+  },
+  {
+    "daylight_hours": 14.3,
+    "sightings": 82
+  },
+  {
+    "daylight_hours": 14.4,
+    "sightings": 103
+  },
+  {
+    "daylight_hours": 14.5,
+    "sightings": 57
+  },
+  {
+    "daylight_hours": 14.6,
+    "sightings": 58
+  },
+  {
+    "daylight_hours": 14.7,
+    "sightings": 100
+  },
+  {
+    "daylight_hours": 14.8,
+    "sightings": 96
+  },
+  {
+    "daylight_hours": 14.9,
+    "sightings": 108
+  },
+  {
+    "daylight_hours": 15.0,
+    "sightings": 135
+  },
+  {
+    "daylight_hours": 15.1,
+    "sightings": 174
+  },
+  {
+    "daylight_hours": 15.2,
+    "sightings": 181
+  },
+  {
+    "daylight_hours": 15.3,
+    "sightings": 103
+  },
+  {
+    "daylight_hours": 15.4,
+    "sightings": 45
+  },
+  {
+    "daylight_hours": 15.5,
+    "sightings": 29
+  },
+  {
+    "daylight_hours": 15.6,
+    "sightings": 27
+  },
+  {
+    "daylight_hours": 15.7,
+    "sightings": 18
+  },
+  {
+    "daylight_hours": 15.8,
+    "sightings": 14
+  },
+  {
+    "daylight_hours": 15.9,
+    "sightings": 16
+  },
+  {
+    "daylight_hours": 16.0,
+    "sightings": 3
+  },
+  {
+    "daylight_hours": 16.1,
+    "sightings": 4
+  },
+  {
+    "daylight_hours": 18.8,
+    "sightings": 1
+  }
+]

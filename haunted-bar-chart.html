@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apparition Types by Evidence Type - Haunted Places</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .bar-container {
+            margin: 20px auto;
+            max-width: 900px;
+        }
+        h1, h2 {
+            text-align: center;
+            color: #333;
+        }
+        .axis-label {
+            font-size: 14px;
+            fill: #555;
+        }
+        .bar {
+            fill: steelblue;
+            transition: fill 0.3s;
+        }
+        .bar:hover {
+            fill: darkblue;
+        }
+        .tooltip {
+            position: absolute;
+            padding: 10px;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            border-radius: 5px;
+            pointer-events: none;
+            font-size: 12px;
+        }
+        .legend rect {
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="bar-container">
+        <h1>Haunted Places Analysis</h1>
+        <h2>Distribution of Apparition Types by Evidence Type</h2>
+        <div id="bar-chart"></div>
+    </div>
+
+    <script>
+        // Set up dimensions for the chart
+        const margin = {top: 50, right: 150, bottom: 100, left: 80};
+        const width = 800 - margin.left - margin.right;
+        const height = 500 - margin.top - margin.bottom;
+
+        // Create SVG element
+        const svg = d3.select("#bar-chart")
+            .append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform", `translate(${margin.left}, ${margin.top})`);
+
+        // Create tooltip div
+        const tooltip = d3.select("body").append("div")
+            .attr("class", "tooltip")
+            .style("opacity", 0);
+
+        // Load the data
+        d3.json("data/HW3_haunted_places.json").then(data => {
+            // Define evidence categories
+            const evidenceTypes = [
+                { id: "both", label: "Both Visual & Audio" },
+                { id: "visual_only", label: "Visual Only" },
+                { id: "audio_only", label: "Audio Only" },
+                { id: "none", label: "No Evidence" }
+            ];
+
+            // Group data by apparition type and evidence type
+            const processedData = [];
+            
+            // Get unique apparition types
+            const apparitionTypes = [...new Set(data.filter(d => d.apparition_type).map(d => d.apparition_type))];
+            
+            // Process data to count occurrences
+            apparitionTypes.forEach(apparition => {
+                evidenceTypes.forEach(evidence => {
+                    let count = 0;
+                    
+                    switch(evidence.id) {
+                        case "both":
+                            count = data.filter(d => 
+                                d.apparition_type === apparition && 
+                                d.has_visual_evidence === "True" && 
+                                d.has_audio_evidence === "True"
+                            ).length;
+                            break;
+                        case "visual_only":
+                            count = data.filter(d => 
+                                d.apparition_type === apparition && 
+                                d.has_visual_evidence === "True" && 
+                                (d.has_audio_evidence !== "True" || !d.has_audio_evidence)
+                            ).length;
+                            break;
+                        case "audio_only":
+                            count = data.filter(d => 
+                                d.apparition_type === apparition && 
+                                (d.has_visual_evidence !== "True" || !d.has_visual_evidence) && 
+                                d.has_audio_evidence === "True"
+                            ).length;
+                            break;
+                        case "none":
+                            count = data.filter(d => 
+                                d.apparition_type === apparition && 
+                                (d.has_visual_evidence !== "True" || !d.has_visual_evidence) && 
+                                (d.has_audio_evidence !== "True" || !d.has_audio_evidence)
+                            ).length;
+                            break;
+                    }
+                    
+                    processedData.push({
+                        apparition_type: apparition,
+                        evidence_type: evidence.id,
+                        evidence_label: evidence.label,
+                        count: count
+                    });
+                });
+            });
+
+            // Set up scales
+            const xScale = d3.scaleBand()
+                .domain(apparitionTypes)
+                .range([0, width])
+                .padding(0.3);
+
+            const yScale = d3.scaleLinear()
+                .domain([0, d3.max(processedData, d => d.count) * 1.1])
+                .range([height, 0]);
+
+            // Color scale based on evidence type
+            const colorScale = d3.scaleOrdinal()
+                .domain(evidenceTypes.map(d => d.id))
+                .range(["#ff7f0e", "#2ca02c", "#d62728", "#9467bd"]);
+
+            // Create x-axis
+            svg.append("g")
+                .attr("transform", `translate(0, ${height})`)
+                .call(d3.axisBottom(xScale))
+                .selectAll("text")
+                    .attr("transform", "rotate(-45)")
+                    .style("text-anchor", "end")
+                    .attr("dx", "-.8em")
+                    .attr("dy", ".15em");
+
+            // Add x-axis label
+            svg.append("text")
+                .attr("class", "axis-label")
+                .attr("x", width / 2)
+                .attr("y", height + margin.bottom / 1.5)
+                .style("text-anchor", "middle")
+                .text("Apparition Type");
+
+            // Create y-axis
+            svg.append("g")
+                .call(d3.axisLeft(yScale));
+
+            // Add y-axis label
+            svg.append("text")
+                .attr("class", "axis-label")
+                .attr("transform", "rotate(-90)")
+                .attr("x", -height / 2)
+                .attr("y", -margin.left / 1.5)
+                .style("text-anchor", "middle")
+                .text("Count");
+
+            // Create the grouped bar chart
+            // Group the data by apparition type for the grouped bar chart
+            const nestedData = d3.group(processedData, d => d.apparition_type);
+            
+            // Inner scale for the evidence types within each apparition type
+            const evidenceScale = d3.scaleBand()
+                .domain(evidenceTypes.map(d => d.id))
+                .range([0, xScale.bandwidth()])
+                .padding(0.1);
+
+            // Create the bars
+            apparitionTypes.forEach(apparition => {
+                const apparitionData = nestedData.get(apparition);
+                
+                svg.selectAll(`.bar-${apparition.replace(/\s+/g, '-')}`)
+                    .data(apparitionData)
+                    .enter()
+                    .append("rect")
+                    .attr("class", "bar")
+                    .attr("x", d => xScale(d.apparition_type) + evidenceScale(d.evidence_type))
+                    .attr("y", d => yScale(d.count))
+                    .attr("width", evidenceScale.bandwidth())
+                    .attr("height", d => height - yScale(d.count))
+                    .attr("fill", d => colorScale(d.evidence_type))
+                    .on("mouseover", function(event, d) {
+                        tooltip.transition()
+                            .duration(200)
+                            .style("opacity", .9);
+                        
+                        tooltip.html(`<strong>${d.apparition_type}</strong><br>
+                                      Evidence: ${d.evidence_label}<br>
+                                      Count: ${d.count}`)
+                            .style("left", (event.pageX + 10) + "px")
+                            .style("top", (event.pageY - 28) + "px");
+                    })
+                    .on("mouseout", function() {
+                        tooltip.transition()
+                            .duration(500)
+                            .style("opacity", 0);
+                    });
+            });
+
+            // Add a legend
+            const legend = svg.append("g")
+                .attr("class", "legend")
+                .attr("transform", `translate(${width + 20}, 0)`);
+
+            evidenceTypes.forEach((type, i) => {
+                const legendRow = legend.append("g")
+                    .attr("transform", `translate(0, ${i * 25})`)
+                    .attr("class", "legend-item");
+                
+                legendRow.append("rect")
+                    .attr("width", 15)
+                    .attr("height", 15)
+                    .attr("fill", colorScale(type.id))
+                    .on("click", function() {
+                        // Toggle visibility of this evidence type
+                        const currentOpacity = svg.selectAll(".bar")
+                            .filter(d => d.evidence_type === type.id)
+                            .style("opacity");
+                        
+                        svg.selectAll(".bar")
+                            .filter(d => d.evidence_type === type.id)
+                            .transition()
+                            .style("opacity", currentOpacity == 1 ? 0.2 : 1);
+                        
+                        d3.select(this)
+                            .transition()
+                            .attr("fill", currentOpacity == 1 ? "gray" : colorScale(type.id));
+                    });
+                
+                legendRow.append("text")
+                    .attr("x", 25)
+                    .attr("y", 12)
+                    .style("font-size", "12px")
+                    .text(type.label);
+            });
+
+            // Add a title for the legend
+            legend.append("text")
+                .attr("y", -10)
+                .style("font-weight", "bold")
+                .style("font-size", "12px")
+                .text("Evidence Types");
+            
+            // Add interactive legend note
+            legend.append("text")
+                .attr("y", evidenceTypes.length * 25 + 15)
+                .style("font-size", "10px")
+                .style("font-style", "italic")
+                .text("Click to toggle visibility");
+
+        }).catch(error => {
+            console.error("Error loading the data:", error);
+            document.getElementById("bar-chart").innerHTML = 
+                "<p style='color: red;'>Error loading data. Please check the console for details.</p>";
+        });
+    </script>
+</body>
+</html>

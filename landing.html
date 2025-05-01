@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>TEAM_15_DSCI550 - Haunted Insights</title>
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      background: url('assets/bg.jpg') no-repeat center center fixed;
+      background-size: cover;
+    }
+
+    .hero {
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .overlay {
+      background-color: rgba(0, 0, 0, 0.7);
+      padding: 40px;
+      text-align: center;
+      border-radius: 10px;
+    }
+
+    .overlay h1 {
+      font-size: 42px;
+      color: white;
+      margin-bottom: 20px;
+    }
+
+    #toggleBtn {
+      font-size: 18px;
+      padding: 12px 24px;
+      background-color: teal;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .viz-list {
+      background: #f5f5f5;
+      padding: 40px;
+      text-align: center;
+    }
+
+    .viz-list ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .viz-list li {
+      margin: 12px 0;
+    }
+
+    .viz-list a {
+      text-decoration: none;
+      font-size: 20px;
+      color: #333;
+    }
+
+    .viz-frame {
+      width: 100%;
+      max-width: 1000px;
+      height: 600px;
+      border: 1px solid #ccc;
+      margin: 30px auto;
+      display: none;
+    }
+
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="hero">
+    <div class="overlay">
+      <h1>TEAM_15_DSCI550: Haunted Insights</h1>
+      <button id="toggleBtn">Explore Visualizations</button>
+    </div>
+  </div>
+
+  <div id="viz-list" class="viz-list hidden">
+    <ul>
+      <li><a href="#" onclick="showViz('treemap.html')">📊 Haunted Sightings Treemap</a></li>
+      <li><a href="#" onclick="showViz('choropleth.html')">🗺️ US Choropleth Map</a></li>
+      <li><a href="#" onclick="showViz('haunted-scatter-plot.html')">📈 Daylight vs Witness Count</a></li>
+      <li><a href="#" onclick="showViz('haunted-bar-chart.html')">📊 Apparition Types by Evidence Type</a></li>
+      <li><a href="#" onclick="showViz('haunted-heatmap.html')">🔥 Time of Day vs Missing Persons</a></li>
+    </ul>
+    <iframe id="vizFrame" class="viz-frame"></iframe>
+  </div>
+
+  <script>
+    document.getElementById("toggleBtn").addEventListener("click", function () {
+      const list = document.getElementById("viz-list");
+      list.classList.toggle("hidden");
+    });
+
+    function showViz(page) {
+      const iframe = document.getElementById("vizFrame");
+      iframe.src = page;
+      iframe.style.display = "block";
+    }
+  </script>
+</body>
+</html>
